@@ -4,9 +4,6 @@ import com.gabriel.wishlist.Application.Interfaces.Services.IWishlistService;
 import com.gabriel.wishlist.Domain.Entities.Wishlist;
 import com.gabriel.wishlist.Domain.Repositories.IWishlistRepository;
 
-import java.util.Optional;
-import java.util.Set;
-
 public class WishlistService implements IWishlistService {
 
     private final IWishlistRepository wishlistRepository;
@@ -18,21 +15,12 @@ public class WishlistService implements IWishlistService {
 
     @Override
     public Wishlist addProduct(String costumerId, String productId) {
-        Optional<Wishlist> wishlist = wishlistRepository.findByCustomerId(costumerId);
+        Wishlist wishlist = wishlistRepository
+                .findByCustomerId(costumerId)
+                .orElse(new Wishlist(costumerId));
 
-        if(wishlist.isEmpty()){
+        wishlist.addProduct(productId);
 
-            Wishlist createdWishlist = Wishlist
-                    .builder()
-                    .customerId(costumerId)
-                    .productIds(Set.of(productId))
-                    .build();
-
-            return wishlistRepository.save(createdWishlist);
-        }
-            wishlist.get()
-                    .addProduct(productId);
-
-            return wishlistRepository.save(wishlist.get());
+        return wishlistRepository.save(wishlist);
     }
 }

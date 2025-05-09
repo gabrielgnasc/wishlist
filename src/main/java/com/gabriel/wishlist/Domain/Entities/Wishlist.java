@@ -1,7 +1,8 @@
 package com.gabriel.wishlist.Domain.Entities;
 
+import com.gabriel.wishlist.Common.Constants;
+import com.gabriel.wishlist.Common.Exceptions.WishlistFullException;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -10,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.HashSet;
 import java.util.Set;
 
-@Builder
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,7 +22,14 @@ public class Wishlist {
     private String customerId;
     private Set<String> productIds = new HashSet<>();
 
-    public void addProduct(String productId) {
+    public Wishlist(String customerId){
+        this.customerId = customerId;
+    }
 
+    public void addProduct(String productId) {
+        if(productIds.size() >= Constants.MAX_LIMIT_WISHLIST){
+            throw new WishlistFullException();
+        }
+        productIds.add(productId);
     }
 }
