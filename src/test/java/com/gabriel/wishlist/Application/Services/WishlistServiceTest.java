@@ -1,5 +1,7 @@
 package com.gabriel.wishlist.Application.Services;
 
+import com.gabriel.wishlist.Common.Constants;
+import com.gabriel.wishlist.Common.Exceptions.WishlistFullException;
 import com.gabriel.wishlist.Domain.Entities.Wishlist;
 import com.gabriel.wishlist.Domain.Repositories.IWishlistRepository;
 import com.gabriel.wishlist.TestsHelpers.WishlistHelper;
@@ -35,12 +37,13 @@ public class WishlistServiceTest {
         // Arrange
         String customerId = "customer1";
         when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.empty());
-
+        when(wishlistRepository.save(any(Wishlist.class))).thenAnswer(invocation -> invocation.getArgument(0));
         // Act
         var wishlist = wishlistService.addProduct(customerId, "product21");
 
         //Assert
         assertThat(wishlist.getProductIds().size()).isEqualTo(1);
+        assertThat(wishlist.getCustomerId()).isEqualTo(customerId);
         Mockito.verify(wishlistRepository, times(1)).save(any(Wishlist.class));
     }
 
@@ -49,6 +52,8 @@ public class WishlistServiceTest {
         // Arrange
         String customerId = "customer1";
         Wishlist wishlist = WishlistHelper.BuildWishlist(customerId);
+        String errorMessage = Constants.ErrorMessage.WISHLIST_EXCEEDED_0_PRODUCTS
+                .replace("{0}", String.valueOf(Constants.MAX_LIMIT_WISHLIST));
 
         for (int i = 0; i < 20; i++) {
             wishlist.addProduct("product" + i);
@@ -58,8 +63,28 @@ public class WishlistServiceTest {
 
         // Act & Assert
         assertThatThrownBy(() -> wishlistService.addProduct(customerId, "product21"))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Wishlist cannot contain more than 20 products.");
+                .isInstanceOf(WishlistFullException.class)
+                .hasMessage(errorMessage);
+
         Mockito.verify(wishlistRepository, never()).save(any(Wishlist.class));
+    }
+
+    @Test
+    void addProduct_ShouldAddPProductInWishlist() {
+        // Arrange
+        int quantityProducts = 5;
+        String customerId = "Customer1";
+        var wishlist = WishlistHelper.BuildWishlistWithProducts(customerId, quantityProducts);
+
+        when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.of(wishlist));
+        when(wishlistRepository.save(any(Wishlist.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        // Act
+
+        var response = wishlistService.addProduct(customerId, "product21");
+
+        //Assert
+        assertThat(response.getProductIds().size()).isEqualTo(quantityProducts + 1);
+        assertThat(response.getCustomerId()).isEqualTo(customerId);
+        Mockito.verify(wishlistRepository, times(1)).save(any(Wishlist.class));
     }
 }
