@@ -14,10 +14,10 @@ public class WishlistService implements IWishlistService {
 
 
     @Override
-    public Wishlist addProduct(String costumerId, String productId) {
+    public Wishlist addProduct(String customerId, String productId) {
         Wishlist wishlist = wishlistRepository
-                .findByCustomerId(costumerId)
-                .orElse(new Wishlist(costumerId));
+                .findByCustomerId(customerId)
+                .orElse(new Wishlist(customerId));
 
         wishlist.addProduct(productId);
 
