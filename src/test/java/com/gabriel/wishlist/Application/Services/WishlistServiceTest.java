@@ -194,7 +194,7 @@ public class WishlistServiceTest {
         String customerId = "customer1";
         String productId = "product1";
 
-        when(wishlistRepository.existsByCustomerIdAndProductIds(customerId, productId))
+        when(wishlistRepository.existsByCustomerIdAndProductIdsContains(customerId, productId))
                 .thenReturn(true);
 
         // Act
@@ -210,7 +210,7 @@ public class WishlistServiceTest {
         String customerId = "customer1";
         String productId = "product1";
 
-        when(wishlistRepository.existsByCustomerIdAndProductIds(customerId, productId))
+        when(wishlistRepository.existsByCustomerIdAndProductIdsContains(customerId, productId))
                 .thenReturn(false);
 
         // Act

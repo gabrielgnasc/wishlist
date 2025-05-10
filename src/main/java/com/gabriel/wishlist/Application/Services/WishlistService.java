@@ -58,6 +58,6 @@ public class WishlistService implements IWishlistService {
     @Override
     public boolean containsProduct(String customerId, String productId) {
         return wishlistRepository
-                .existsByCustomerIdAndProductIds(customerId, productId);
+                .existsByCustomerIdAndProductIdsContains(customerId, productId);
     }
 }
