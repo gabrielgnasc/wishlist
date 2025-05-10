@@ -2,8 +2,12 @@ package com.gabriel.wishlist.Application.Interfaces.Services;
 
 import com.gabriel.wishlist.Domain.Entities.Wishlist;
 
-public interface IWishlistService {
-    public Wishlist addProduct(String costumerId, String productId);
+import java.util.Set;
 
-    public Wishlist removeProduct(String customerId, String productId);
+public interface IWishlistService {
+    Wishlist addProduct(String costumerId, String productId);
+
+    Wishlist removeProduct(String customerId, String productId);
+
+    Set<String> listProducts(String customerId);
 }

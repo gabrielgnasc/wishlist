@@ -140,4 +140,47 @@ public class WishlistServiceTest {
         assertThat(response.getProductIds().size()).isEqualTo(initialQuantity - 1);
         Mockito.verify(wishlistRepository, times(1)).save(any(Wishlist.class));
     }
+
+    @Test
+    void listProducts_ShouldReturnEmptyListIfCustomerDoesNotExists(){
+        // Arrange
+        String customerId = "customer1";
+        when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.empty());
+
+        // Act
+        var response = wishlistService.listProducts(customerId);
+
+        //Assert
+        assertThat(response.size()).isEqualTo(0);
+    }
+
+    @Test
+    void listProducts_ShouldReturnAListOfProducts(){
+        // Arrange
+        String customerId = "customer1";
+        int initialQuantity = 5;
+        Wishlist wishlist = WishlistHelper.BuildWishlistWithProducts(customerId, initialQuantity);
+        when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.of(wishlist));
+
+        // Act
+        var response = wishlistService.listProducts(customerId);
+
+        //Assert
+        assertThat(response.size()).isEqualTo(initialQuantity);
+    }
+
+    @Test
+    void containsProduct_ShouldThrowExceptionIfCustomerDoesNotExist(){
+        // Arrange
+        String customerId = "customer1";
+        String errorMessage = Constants.ErrorMessage.WISHLIST_OF_CUSTOMER_NOT_FOUND;
+
+        when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThatThrownBy(() -> wishlistService.containsProduct(customerId, "product1"))
+                .isInstanceOf(WishlistNotFoundException.class)
+                .hasMessage(errorMessage);
+
+    }
 }

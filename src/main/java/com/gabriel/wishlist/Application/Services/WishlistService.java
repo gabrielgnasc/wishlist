@@ -5,6 +5,9 @@ import com.gabriel.wishlist.Common.Exceptions.WishlistNotFoundException;
 import com.gabriel.wishlist.Domain.Entities.Wishlist;
 import com.gabriel.wishlist.Domain.Repositories.IWishlistRepository;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class WishlistService implements IWishlistService {
 
     private final IWishlistRepository wishlistRepository;
@@ -34,5 +37,13 @@ public class WishlistService implements IWishlistService {
         wishlist.removeProduct(productId);
 
         return wishlistRepository.save(wishlist);
+    }
+
+    @Override
+    public Set<String> listProducts(String customerId) {
+        return wishlistRepository
+                .findByCustomerId(customerId)
+                .map(Wishlist::getProductIds)
+                .orElse(new HashSet<>());
     }
 }
