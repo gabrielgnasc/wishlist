@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 
+import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -70,5 +72,41 @@ public class WishlistControllerTest {
         assertThat(response.getBody().productIds()).contains(productId);
 
         verify(wishlistService, times(1)).removeProduct(eq(customerId), eq(productId));
+    }
+
+    @Test
+    void listProducts_ShouldReturnAnProductList() {
+        // Arrange
+        String customerId = "Customer1";
+        String productId = "Product1";
+
+        when(wishlistService.listProducts(eq(customerId))).thenReturn(Set.of(productId));
+
+        // Act
+        var response = wishlistController.listProducts(customerId);
+
+        //Assert
+        assertThat(response).isNotNull();
+        assertThat(response.getBody()).isInstanceOf(Set.class);
+
+        verify(wishlistService, times(1)).listProducts(eq(customerId));
+    }
+
+    @Test
+    void productExist_ShouldReturnBooleanResponse() {
+        // Arrange
+        String customerId = "Customer1";
+        String productId = "Product1";
+
+        when(wishlistService.containsProduct(eq(customerId), eq(productId))).thenReturn(true);
+
+        // Act
+        var response = wishlistController.containsProduct(customerId, productId);
+
+        //Assert
+        assertThat(response).isNotNull();
+        assertThat(response.getBody()).isTrue();
+
+        verify(wishlistService, times(1)).containsProduct(eq(customerId), eq(productId));
     }
 }
