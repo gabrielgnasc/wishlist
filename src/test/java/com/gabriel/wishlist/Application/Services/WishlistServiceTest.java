@@ -36,7 +36,9 @@ public class WishlistServiceTest {
         MockitoAnnotations.openMocks(this);
 
         when(mapper.ToWishlistDTO(any(Wishlist.class)))
-                .thenAnswer(invocation -> WishlistHelper.ToDTO(invocation.getArgument(0)));
+                .thenAnswer(invocation -> WishlistHelper
+                        .ToDTO(invocation.getArgument(0))
+                );
     }
 
     @Test
@@ -83,8 +85,10 @@ public class WishlistServiceTest {
         String customerId = "Customer1";
         var wishlist = WishlistHelper.BuildWishlistWithProducts(customerId, quantityProducts);
 
-        when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.of(wishlist));
-        when(wishlistRepository.save(any(Wishlist.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(wishlistRepository.findByCustomerId(customerId))
+                .thenReturn(Optional.of(wishlist));
+        when(wishlistRepository.save(any(Wishlist.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
         // Act
 
         var response = wishlistService.addProduct(customerId, "product21");
@@ -92,7 +96,8 @@ public class WishlistServiceTest {
         //Assert
         assertThat(response.productIds().size()).isEqualTo(quantityProducts + 1);
         assertThat(response.customerId()).isEqualTo(customerId);
-        Mockito.verify(wishlistRepository, times(1)).save(any(Wishlist.class));
+        Mockito.verify(wishlistRepository, times(1))
+                .save(any(Wishlist.class));
     }
 
     @Test
@@ -108,7 +113,8 @@ public class WishlistServiceTest {
                 .isInstanceOf(WishlistNotFoundException.class)
                 .hasMessage(errorMessage);
 
-        Mockito.verify(wishlistRepository, never()).save(any(Wishlist.class));
+        Mockito.verify(wishlistRepository, never())
+                .save(any(Wishlist.class));
     }
 
     @Test
@@ -118,8 +124,10 @@ public class WishlistServiceTest {
         int initialQuantity = 5;
         Wishlist wishlist = WishlistHelper.BuildWishlistWithProducts(customerId, initialQuantity);
 
-        when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.of(wishlist));
-        when(wishlistRepository.save(any(Wishlist.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(wishlistRepository.findByCustomerId(customerId))
+                .thenReturn(Optional.of(wishlist));
+        when(wishlistRepository.save(any(Wishlist.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
         var response = wishlistService.removeProduct(customerId, "product6");
@@ -136,22 +144,26 @@ public class WishlistServiceTest {
         int initialQuantity = 5;
         Wishlist wishlist = WishlistHelper.BuildWishlistWithProducts(customerId, initialQuantity);
 
-        when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.of(wishlist));
-        when(wishlistRepository.save(any(Wishlist.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(wishlistRepository.findByCustomerId(customerId))
+                .thenReturn(Optional.of(wishlist));
+        when(wishlistRepository.save(any(Wishlist.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
         var response = wishlistService.removeProduct(customerId, "product1");
 
         //Assert
         assertThat(response.productIds().size()).isEqualTo(initialQuantity - 1);
-        Mockito.verify(wishlistRepository, times(1)).save(any(Wishlist.class));
+        Mockito.verify(wishlistRepository, times(1))
+                .save(any(Wishlist.class));
     }
 
     @Test
     void listProducts_ShouldReturnEmptyListIfCustomerDoesNotExists(){
         // Arrange
         String customerId = "customer1";
-        when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.empty());
+        when(wishlistRepository.findByCustomerId(customerId))
+                .thenReturn(Optional.empty());
 
         // Act
         var response = wishlistService.listProducts(customerId);
@@ -166,7 +178,8 @@ public class WishlistServiceTest {
         String customerId = "customer1";
         int initialQuantity = 5;
         Wishlist wishlist = WishlistHelper.BuildWishlistWithProducts(customerId, initialQuantity);
-        when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.of(wishlist));
+        when(wishlistRepository.findByCustomerId(customerId))
+                .thenReturn(Optional.of(wishlist));
 
         // Act
         var response = wishlistService.listProducts(customerId);
