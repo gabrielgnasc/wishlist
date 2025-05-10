@@ -25,7 +25,8 @@ public class WishlistService implements IWishlistService {
 
         wishlist.addProduct(productId);
 
-        return wishlistRepository.save(wishlist);
+        return wishlistRepository
+                .save(wishlist);
     }
 
     @Override
@@ -36,7 +37,8 @@ public class WishlistService implements IWishlistService {
 
         wishlist.removeProduct(productId);
 
-        return wishlistRepository.save(wishlist);
+        return wishlistRepository
+                .save(wishlist);
     }
 
     @Override
@@ -45,5 +47,11 @@ public class WishlistService implements IWishlistService {
                 .findByCustomerId(customerId)
                 .map(Wishlist::getProductIds)
                 .orElse(new HashSet<>());
+    }
+
+    @Override
+    public boolean containsProduct(String customerId, String productId) {
+        return wishlistRepository
+                .existsByCustomerIdAndProductIds(customerId, productId);
     }
 }

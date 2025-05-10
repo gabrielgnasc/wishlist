@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface IWishlistRepository extends MongoRepository<Wishlist, String> {
 
     Optional<Wishlist> findByCustomerId(String costumerId);
+
+    boolean existsByCustomerIdAndProductIds(String customerId, String productId);
 }

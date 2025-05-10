@@ -170,17 +170,34 @@ public class WishlistServiceTest {
     }
 
     @Test
-    void containsProduct_ShouldThrowExceptionIfCustomerDoesNotExist(){
+    void containsProduct_ShouldReturnTrueIfExists(){
         // Arrange
         String customerId = "customer1";
-        String errorMessage = Constants.ErrorMessage.WISHLIST_OF_CUSTOMER_NOT_FOUND;
+        String productId = "product1";
 
-        when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.empty());
+        when(wishlistRepository.existsByCustomerIdAndProductIds(customerId, productId))
+                .thenReturn(true);
 
-        // Act & Assert
-        assertThatThrownBy(() -> wishlistService.containsProduct(customerId, "product1"))
-                .isInstanceOf(WishlistNotFoundException.class)
-                .hasMessage(errorMessage);
+        // Act
+        var response = wishlistService.containsProduct(customerId, productId);
+        // Assert
+        assertThat(response).isTrue();
+
+    }
+
+    @Test
+    void containsProduct_ShouldReturnFalseIfNotExists(){
+        // Arrange
+        String customerId = "customer1";
+        String productId = "product1";
+
+        when(wishlistRepository.existsByCustomerIdAndProductIds(customerId, productId))
+                .thenReturn(false);
+
+        // Act
+        var response = wishlistService.containsProduct(customerId, productId);
+        // Assert
+        assertThat(response).isFalse();
 
     }
 }

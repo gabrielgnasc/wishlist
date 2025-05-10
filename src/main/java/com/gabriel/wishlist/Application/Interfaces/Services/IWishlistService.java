@@ -10,4 +10,6 @@ public interface IWishlistService {
     Wishlist removeProduct(String customerId, String productId);
 
     Set<String> listProducts(String customerId);
+
+    boolean containsProduct(String customerId, String productId);
 }
