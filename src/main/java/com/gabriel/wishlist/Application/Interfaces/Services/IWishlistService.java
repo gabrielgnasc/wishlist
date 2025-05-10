@@ -1,13 +1,13 @@
 package com.gabriel.wishlist.Application.Interfaces.Services;
 
-import com.gabriel.wishlist.Domain.Entities.Wishlist;
+import com.gabriel.wishlist.Application.Models.WishlistDTO;
 
 import java.util.Set;
 
 public interface IWishlistService {
-    Wishlist addProduct(String costumerId, String productId);
+    WishlistDTO addProduct(String costumerId, String productId);
 
-    Wishlist removeProduct(String customerId, String productId);
+    WishlistDTO removeProduct(String customerId, String productId);
 
     Set<String> listProducts(String customerId);
 

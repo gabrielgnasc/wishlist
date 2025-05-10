@@ -1,5 +1,6 @@
 package com.gabriel.wishlist.TestsHelpers;
 
+import com.gabriel.wishlist.Application.Models.WishlistDTO;
 import com.gabriel.wishlist.Domain.Entities.Wishlist;
 
 public class WishlistHelper {
@@ -14,5 +15,13 @@ public class WishlistHelper {
             wishlist.addProduct("product" + i);
         }
         return wishlist;
+    }
+
+    public static WishlistDTO ToDTO(Wishlist entity) {
+        return new WishlistDTO(
+                entity.getId(),
+                entity.getCustomerId(),
+                entity.getProductIds()
+        );
     }
 }
