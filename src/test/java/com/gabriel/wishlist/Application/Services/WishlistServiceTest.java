@@ -2,6 +2,7 @@ package com.gabriel.wishlist.Application.Services;
 
 import com.gabriel.wishlist.Common.Constants;
 import com.gabriel.wishlist.Common.Exceptions.WishlistFullException;
+import com.gabriel.wishlist.Common.Exceptions.WishlistNotFoundException;
 import com.gabriel.wishlist.Domain.Entities.Wishlist;
 import com.gabriel.wishlist.Domain.Repositories.IWishlistRepository;
 import com.gabriel.wishlist.TestsHelpers.WishlistHelper;
@@ -85,6 +86,58 @@ public class WishlistServiceTest {
         //Assert
         assertThat(response.getProductIds().size()).isEqualTo(quantityProducts + 1);
         assertThat(response.getCustomerId()).isEqualTo(customerId);
+        Mockito.verify(wishlistRepository, times(1)).save(any(Wishlist.class));
+    }
+
+    @Test
+    void removeProduct_ShouldThrowExceptionIfCustomerDoesNotExist() {
+        // Arrange
+        String customerId = "customer1";
+        String errorMessage = Constants.ErrorMessage.WISHLIST_OF_CUSTOMER_NOT_FOUND;
+
+        when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThatThrownBy(() -> wishlistService.removeProduct(customerId, "product21"))
+                .isInstanceOf(WishlistNotFoundException.class)
+                .hasMessage(errorMessage);
+
+        Mockito.verify(wishlistRepository, never()).save(any(Wishlist.class));
+    }
+
+    @Test
+    void removeProduct_ShouldNotRemoveIfProductNotExisting() {
+        // Arrange
+        String customerId = "customer1";
+        int initialQuantity = 5;
+        Wishlist wishlist = WishlistHelper.BuildWishlistWithProducts(customerId, initialQuantity);
+
+        when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.of(wishlist));
+        when(wishlistRepository.save(any(Wishlist.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        var response = wishlistService.removeProduct(customerId, "product6");
+
+        //Assert
+        assertThat(response.getProductIds().size()).isEqualTo(initialQuantity);
+        Mockito.verify(wishlistRepository, times(1)).save(any(Wishlist.class));
+    }
+
+    @Test
+    void removeProduct_ShouldRemoveIfProductExists() {
+        // Arrange
+        String customerId = "customer1";
+        int initialQuantity = 5;
+        Wishlist wishlist = WishlistHelper.BuildWishlistWithProducts(customerId, initialQuantity);
+
+        when(wishlistRepository.findByCustomerId(customerId)).thenReturn(Optional.of(wishlist));
+        when(wishlistRepository.save(any(Wishlist.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        var response = wishlistService.removeProduct(customerId, "product1");
+
+        //Assert
+        assertThat(response.getProductIds().size()).isEqualTo(initialQuantity - 1);
         Mockito.verify(wishlistRepository, times(1)).save(any(Wishlist.class));
     }
 }

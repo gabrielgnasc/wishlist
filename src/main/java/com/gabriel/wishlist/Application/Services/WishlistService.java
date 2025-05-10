@@ -1,6 +1,7 @@
 package com.gabriel.wishlist.Application.Services;
 
 import com.gabriel.wishlist.Application.Interfaces.Services.IWishlistService;
+import com.gabriel.wishlist.Common.Exceptions.WishlistNotFoundException;
 import com.gabriel.wishlist.Domain.Entities.Wishlist;
 import com.gabriel.wishlist.Domain.Repositories.IWishlistRepository;
 
@@ -20,6 +21,17 @@ public class WishlistService implements IWishlistService {
                 .orElse(new Wishlist(customerId));
 
         wishlist.addProduct(productId);
+
+        return wishlistRepository.save(wishlist);
+    }
+
+    @Override
+    public Wishlist removeProduct(String customerId, String productId) {
+        Wishlist wishlist = wishlistRepository
+                .findByCustomerId(customerId)
+                .orElseThrow(WishlistNotFoundException::new);
+
+        wishlist.removeProduct(productId);
 
         return wishlistRepository.save(wishlist);
     }
