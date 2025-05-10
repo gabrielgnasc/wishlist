@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+spring:
+  data:
+    mongodb:
+      database: wishlist
+      uri: mongodb://root:secret@localhost:27017/wishlist?authSource=admin
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
