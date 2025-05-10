@@ -34,6 +34,6 @@ public class Wishlist {
     }
 
     public void removeProduct(String productId) {
-        productIds.removeIf(id -> id.equals(productId));
+        productIds.remove(productId);
     }
 }

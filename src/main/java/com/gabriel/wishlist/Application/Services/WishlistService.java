@@ -8,7 +8,6 @@ import com.gabriel.wishlist.Domain.Entities.Wishlist;
 import com.gabriel.wishlist.Domain.Repositories.IWishlistRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -51,8 +50,9 @@ public class WishlistService implements IWishlistService {
     public Set<String> listProducts(String customerId) {
         return wishlistRepository
                 .findByCustomerId(customerId)
-                .map(Wishlist::getProductIds)
-                .orElse(new HashSet<>());
+                .orElseThrow(WishlistNotFoundException::new)
+                .getProductIds();
+
     }
 
     @Override

@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 public class AddProductRequest {
 
     @NotBlank
-    @Schema(description = "ID do produto a ser adicionado", example = "67890", required = true)
+    @Schema(description = "ID do produto a ser adicionado", example = "67890")
     private String productId;
 }

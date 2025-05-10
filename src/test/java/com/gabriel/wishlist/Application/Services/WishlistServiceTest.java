@@ -159,17 +159,18 @@ public class WishlistServiceTest {
     }
 
     @Test
-    void listProducts_ShouldReturnEmptyListIfCustomerDoesNotExists(){
+    void listProducts_ShouldThrowExceptionIfCustomerDoesNotExists(){
         // Arrange
         String customerId = "customer1";
+        String errorMessage = Constants.ErrorMessage.WISHLIST_OF_CUSTOMER_NOT_FOUND;
         when(wishlistRepository.findByCustomerId(customerId))
                 .thenReturn(Optional.empty());
 
-        // Act
-        var response = wishlistService.listProducts(customerId);
+        // Act & Assert
+        assertThatThrownBy(() -> wishlistService.listProducts(customerId))
+                .isInstanceOf(WishlistNotFoundException.class)
+                .hasMessage(errorMessage);
 
-        //Assert
-        assertThat(response.size()).isEqualTo(0);
     }
 
     @Test
