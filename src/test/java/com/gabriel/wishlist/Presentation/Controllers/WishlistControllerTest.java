@@ -1,0 +1,74 @@
+package com.gabriel.wishlist.Presentation.Controllers;
+
+import com.gabriel.wishlist.Application.Interfaces.Services.IWishlistService;
+import com.gabriel.wishlist.Application.Models.WishlistDTO;
+
+import com.gabriel.wishlist.Domain.Entities.Wishlist;
+import com.gabriel.wishlist.Presentation.Requests.AddProductRequest;
+import com.gabriel.wishlist.TestsHelpers.WishlistHelper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
+
+public class WishlistControllerTest {
+
+    @Mock
+    private IWishlistService wishlistService;
+
+    @InjectMocks
+    private WishlistController wishlistController;
+
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void addProduct_ShouldReturnWishlistDTO() {
+        // Arrange
+        String customerId = "Customer1";
+        String productId = "Product1";
+        WishlistDTO wishlist = WishlistHelper.BuildWishlistDTO(customerId, productId);
+
+        when(wishlistService.addProduct(eq(customerId), eq(productId))).thenReturn(wishlist);
+
+        // Act
+        var response = wishlistController.addProduct(customerId, new AddProductRequest(productId));
+
+        // Assert
+        assertThat(response).isNotNull();
+        assertThat(response.getBody()).isInstanceOf(WishlistDTO.class);
+        assertThat(response.getBody().customerId()).isEqualTo(customerId);
+        assertThat(response.getBody().productIds()).contains(productId);
+
+        verify(wishlistService, times(1)).addProduct(eq(customerId), eq(productId));
+    }
+
+    @Test
+    void removeProduct_ShouldReturnWishlistDTO() {
+        // Arrange
+        String customerId = "Customer1";
+        String productId = "Product1";
+        WishlistDTO wishlist = WishlistHelper.BuildWishlistDTO(customerId, productId);
+
+        when(wishlistService.removeProduct(eq(customerId), eq(productId))).thenReturn(wishlist);
+
+        // Act
+        var response = wishlistController.removeProduct(customerId, productId);
+
+        //Assert
+        assertThat(response).isNotNull();
+        assertThat(response.getBody()).isInstanceOf(WishlistDTO.class);
+        assertThat(response.getBody().customerId()).isEqualTo(customerId);
+        assertThat(response.getBody().productIds()).contains(productId);
+
+        verify(wishlistService, times(1)).removeProduct(eq(customerId), eq(productId));
+    }
+}
