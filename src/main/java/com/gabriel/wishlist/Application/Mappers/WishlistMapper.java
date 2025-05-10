@@ -10,6 +10,7 @@ public class WishlistMapper implements IWishlistMapper {
 
     @Override
     public WishlistDTO ToWishlistDTO(Wishlist entity) {
+        if(entity == null) return null;
         return new WishlistDTO(
                 entity.getId(),
                 entity.getCustomerId(),
