@@ -1,7 +1,9 @@
 package com.gabriel.wishlist.Application.Services;
 
+import com.gabriel.wishlist.Application.Interfaces.ExternalServices.IDistributedLock;
 import com.gabriel.wishlist.Application.Interfaces.Mappers.IWishlistMapper;
 import com.gabriel.wishlist.Common.Constants;
+import com.gabriel.wishlist.Common.Exceptions.ResourceConflictException;
 import com.gabriel.wishlist.Common.Exceptions.WishlistFullException;
 import com.gabriel.wishlist.Common.Exceptions.WishlistNotFoundException;
 import com.gabriel.wishlist.Domain.Entities.Wishlist;
@@ -18,15 +20,17 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class WishlistServiceTest {
 
     @Mock
     private IWishlistRepository wishlistRepository;
-
     @Mock
     private IWishlistMapper mapper;
+    @Mock
+    private IDistributedLock distributedLock;
 
     @InjectMocks
     private WishlistService wishlistService;
@@ -39,6 +43,7 @@ public class WishlistServiceTest {
                 .thenAnswer(invocation -> WishlistHelper
                         .ToDTO(invocation.getArgument(0))
                 );
+        when(distributedLock.acquireLock(anyString(), anyLong(), anyLong())).thenReturn(true);
     }
 
     @Test
@@ -101,6 +106,28 @@ public class WishlistServiceTest {
     }
 
     @Test
+    void addProduct_ShouldThrowException_WhenNotAcquireLock() {
+        // Arrange
+        int quantityProducts = 5;
+        String customerId = "Customer1";
+        var wishlist = WishlistHelper.BuildWishlistWithProducts(customerId, quantityProducts);
+
+        when(wishlistRepository.findByCustomerId(customerId))
+                .thenReturn(Optional.of(wishlist));
+        when(wishlistRepository.save(any(Wishlist.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        when(distributedLock.acquireLock(anyString(), anyLong(), anyLong())).thenReturn(false);
+
+        // Act
+        ResourceConflictException exception = assertThrows(ResourceConflictException.class, () ->
+                wishlistService.addProduct(customerId, "Produto1")
+        );
+
+        //Assert
+        assertThat(exception.getMessage()).isEqualTo(Constants.ErrorMessage.UNFINISHED_TRANSACTION);
+    }
+
+    @Test
     void removeProduct_ShouldThrowExceptionIfCustomerDoesNotExist() {
         // Arrange
         String customerId = "customer1";
@@ -156,6 +183,28 @@ public class WishlistServiceTest {
         assertThat(response.productIds().size()).isEqualTo(initialQuantity - 1);
         Mockito.verify(wishlistRepository, times(1))
                 .save(any(Wishlist.class));
+    }
+
+    @Test
+    void removeProduct_ShouldThrowException_WhenNotAcquireLock() {
+        // Arrange
+        int quantityProducts = 5;
+        String customerId = "Customer1";
+        var wishlist = WishlistHelper.BuildWishlistWithProducts(customerId, quantityProducts);
+
+        when(wishlistRepository.findByCustomerId(customerId))
+                .thenReturn(Optional.of(wishlist));
+        when(wishlistRepository.save(any(Wishlist.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        when(distributedLock.acquireLock(anyString(), anyLong(), anyLong())).thenReturn(false);
+
+        // Act
+        ResourceConflictException exception = assertThrows(ResourceConflictException.class, () ->
+                wishlistService.removeProduct(customerId, "Produto1")
+        );
+
+        //Assert
+        assertThat(exception.getMessage()).isEqualTo(Constants.ErrorMessage.UNFINISHED_TRANSACTION);
     }
 
     @Test
