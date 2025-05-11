@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+spring:
+  config:
+    activate:
+      on-profile: test
+  application:
+    name: wishlist
+
+  data:
+    mongodb:
+      database: wishlist
+      uri: mongodb://root:secret@localhost:27017/wishlist_test?authSource=admin
+
+  redis:
+    connection: redis://localhost:6379
+    host: redis
+    port: 6379
+    test:
+      enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
