@@ -9,6 +9,8 @@ import com.gabriel.wishlist.Common.Exceptions.ResourceConflictException;
 import com.gabriel.wishlist.Common.Exceptions.WishlistNotFoundException;
 import com.gabriel.wishlist.Domain.Entities.Wishlist;
 import com.gabriel.wishlist.Domain.Repositories.IWishlistRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -16,6 +18,7 @@ import java.util.Set;
 @Service
 public class WishlistService implements IWishlistService {
 
+    private final Logger logger = LoggerFactory.getLogger(WishlistService.class);
     private final IWishlistRepository wishlistRepository;
     private final IWishlistMapper mapper;
     private final IDistributedLock distributedLock;
@@ -37,6 +40,7 @@ public class WishlistService implements IWishlistService {
                     .orElse(new Wishlist(customerId));
 
             wishlist.addProduct(productId);
+            logger.info("Produto {} adicionado na wishlist do cliente {}", productId, customerId);
 
             return mapper
                     .ToWishlistDTO(wishlistRepository.save(wishlist));
@@ -55,6 +59,7 @@ public class WishlistService implements IWishlistService {
                     .orElseThrow(WishlistNotFoundException::new);
 
             wishlist.removeProduct(productId);
+            logger.info("Produto {} removido da wishlist do cliente {}", productId, customerId);
 
             return mapper
                     .ToWishlistDTO(wishlistRepository.save(wishlist));
@@ -87,9 +92,11 @@ public class WishlistService implements IWishlistService {
         {
             throw new ResourceConflictException(Constants.ErrorMessage.UNFINISHED_TRANSACTION);
         }
+        logger.info("Lock adquirido com sucesso. Cliente: {}", customerId);
     }
 
     private void releaseLock(String customerId){
         distributedLock.releaseLock(Constants.LOCK_CUSTOMER_PREFIX + customerId );
+        logger.info("Lock liberado com sucesso. Cliente: {}", customerId);
     }
 }

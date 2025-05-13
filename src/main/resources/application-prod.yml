@@ -14,7 +14,7 @@ spring:
       uri: mongodb://root:secret@localhost:27017/wishlist?authSource=admin
 
   redis:
-    connection: redis://redis:6379
+    connection: redis://localhost:6379
     host: redis
     port: 6379
     database: 0
