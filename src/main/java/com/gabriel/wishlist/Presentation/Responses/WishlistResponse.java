@@ -10,6 +10,7 @@ public record WishlistResponse(
         Set<String> productIds
 ) {
     public static WishlistResponse fromEntity(Wishlist entity){
+        if(entity == null) return null;
         return new WishlistResponse(
                 entity.getId(),
                 entity.getCustomerId(),

@@ -1,4 +1,4 @@
-package com.gabriel.wishlist.Config;
+package com.gabriel.wishlist.Common.Config;
 
 
 import com.github.fppt.jedismock.RedisServer;

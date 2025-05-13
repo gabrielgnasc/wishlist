@@ -37,8 +37,8 @@ public class WishlistControllerTest {
     void addProduct_ShouldReturnWishlistDTO() {
         // Arrange
         String customerId = "Customer1";
-        String productId = "Product1";
-        Wishlist wishlist = WishlistHelper.BuildWishlist(customerId);
+        String productId = "product1";
+        Wishlist wishlist = WishlistHelper.BuildWishlistWithProducts(customerId, 3);
 
         when(wishlistService.addProduct(eq(customerId), eq(productId))).thenReturn(wishlist);
 
@@ -58,8 +58,8 @@ public class WishlistControllerTest {
     void removeProduct_ShouldReturnWishlistDTO() {
         // Arrange
         String customerId = "Customer1";
-        String productId = "Product1";
-        Wishlist wishlist = WishlistHelper.BuildWishlist(customerId);
+        String productId = "product1";
+        Wishlist wishlist = WishlistHelper.BuildWishlistWithProducts(customerId, 3);
 
         when(wishlistService.removeProduct(eq(customerId), eq(productId))).thenReturn(wishlist);
 
