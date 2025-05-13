@@ -3,6 +3,7 @@ package com.gabriel.wishlist.Presentation.Controllers;
 import com.gabriel.wishlist.Application.Interfaces.Services.IWishlistService;
 import com.gabriel.wishlist.Application.Models.WishlistDTO;
 import com.gabriel.wishlist.Presentation.Requests.AddProductRequest;
+import com.gabriel.wishlist.Presentation.Responses.ContainsProductResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -65,11 +66,12 @@ public class WishlistController {
     @Operation(summary = "Contém produto", description= "Verifica se contém um produto na Wishlist")
     @ApiResponse(responseCode = "200", description= "retorna se produto existe na Wishlist")
     @GetMapping("/{customerId}")
-    public ResponseEntity<Boolean> containsProduct(
+    public ResponseEntity<ContainsProductResponse> containsProduct(
             @PathVariable String customerId,
             @RequestParam(name = "product_id") String productId
     ){
         var response = wishlistService.containsProduct(customerId, productId);
-        return ResponseEntity.ok(response);
+        var dto = new ContainsProductResponse(response, productId);
+        return ResponseEntity.ok(dto);
     }
 }

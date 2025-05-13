@@ -6,6 +6,7 @@ import com.gabriel.wishlist.Application.Models.WishlistDTO;
 import com.gabriel.wishlist.Domain.Entities.Wishlist;
 import com.gabriel.wishlist.Presentation.Requests.AddProductRequest;
 import com.gabriel.wishlist.TestsHelpers.WishlistHelper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -93,7 +94,7 @@ public class WishlistControllerTest {
     }
 
     @Test
-    void productExist_ShouldReturnBooleanResponse() {
+    void productExist_ShouldReturnResponse() {
         // Arrange
         String customerId = "Customer1";
         String productId = "Product1";
@@ -105,8 +106,8 @@ public class WishlistControllerTest {
 
         //Assert
         assertThat(response).isNotNull();
-        assertThat(response.getBody()).isTrue();
-
+        Assertions.assertTrue(response.getBody().hasProduct());
+        assertThat(response.getBody().productId()).isEqualTo(productId);
         verify(wishlistService, times(1)).containsProduct(eq(customerId), eq(productId));
     }
 }
