@@ -1,24 +1,35 @@
-server:
-  port: 8080
-
 spring:
   config:
     activate:
-      on-profile: prod
+      on-profile: ${SPRING_PROFILES_ACTIVE}
   application:
     name: wishlist
 
   data:
     mongodb:
       database: wishlist
-      uri: mongodb://root:secret@localhost:27017/wishlist?authSource=admin
+      uri: ${SPRING_MONGO_URI:'mongodb://root:secret@localhost:27017/wishlist?authSource=admin'}
 
   redis:
-    connection: redis://localhost:6379
-    host: redis
-    port: 6379
+    connection: ${SPRING_REDIS_CONNECTION:redis://localhost:6379}
     database: 0
 
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health, info, prometheus
+
+    endpoint:
+      health:
+        show-details: always
+    health:
+      probes:
+        enabled: true
+
 springdoc:
+  api-docs:
+    servers:
+      - url: http://localhost:8082
   swagger-ui:
     path: /swagger-ui.html
