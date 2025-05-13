@@ -1,9 +1,7 @@
 package com.gabriel.wishlist.Application.Services;
 
 import com.gabriel.wishlist.Application.Interfaces.ExternalServices.IDistributedLock;
-import com.gabriel.wishlist.Application.Interfaces.Mappers.IWishlistMapper;
 import com.gabriel.wishlist.Application.Interfaces.Services.IWishlistService;
-import com.gabriel.wishlist.Application.Models.WishlistDTO;
 import com.gabriel.wishlist.Common.Constants;
 import com.gabriel.wishlist.Common.Exceptions.ResourceConflictException;
 import com.gabriel.wishlist.Common.Exceptions.WishlistNotFoundException;
@@ -20,18 +18,16 @@ public class WishlistService implements IWishlistService {
 
     private final Logger logger = LoggerFactory.getLogger(WishlistService.class);
     private final IWishlistRepository wishlistRepository;
-    private final IWishlistMapper mapper;
     private final IDistributedLock distributedLock;
 
-    public WishlistService(IWishlistRepository wishlistRepository, IWishlistMapper mapper, IDistributedLock distributedLock) {
+    public WishlistService(IWishlistRepository wishlistRepository, IDistributedLock distributedLock) {
         this.wishlistRepository = wishlistRepository;
-        this.mapper = mapper;
         this.distributedLock = distributedLock;
     }
 
 
     @Override
-    public WishlistDTO addProduct(String customerId, String productId) {
+    public Wishlist addProduct(String customerId, String productId) {
         acquireLock(customerId);
         try{
 
@@ -42,15 +38,14 @@ public class WishlistService implements IWishlistService {
             wishlist.addProduct(productId);
             logger.info("Produto {} adicionado na wishlist do cliente {}", productId, customerId);
 
-            return mapper
-                    .ToWishlistDTO(wishlistRepository.save(wishlist));
+            return wishlistRepository.save(wishlist);
         }finally {
             releaseLock(customerId);
         }
     }
 
     @Override
-    public WishlistDTO removeProduct(String customerId, String productId) {
+    public Wishlist removeProduct(String customerId, String productId) {
         acquireLock(customerId);
         try{
 
@@ -61,8 +56,7 @@ public class WishlistService implements IWishlistService {
             wishlist.removeProduct(productId);
             logger.info("Produto {} removido da wishlist do cliente {}", productId, customerId);
 
-            return mapper
-                    .ToWishlistDTO(wishlistRepository.save(wishlist));
+            return wishlistRepository.save(wishlist);
         }finally {
             releaseLock(customerId);
         }

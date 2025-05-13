@@ -1,6 +1,5 @@
-package com.gabriel.wishlist.Application.Mappers;
+package com.gabriel.wishlist.Presentation.Responses;
 
-import com.gabriel.wishlist.Application.Models.WishlistDTO;
 import com.gabriel.wishlist.Domain.Entities.Wishlist;
 import org.junit.jupiter.api.Test;
 
@@ -8,9 +7,8 @@ import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class WishlistMapperTest {
+public class WishlistResponseTest {
 
-    private final WishlistMapper wishlistMapper = new WishlistMapper();
 
     @Test
     void toWishlistDTO_ShouldMapEntityToDTO() {
@@ -24,13 +22,13 @@ public class WishlistMapperTest {
         wishlist.setProductIds(productIds);
 
         // Act
-        WishlistDTO wishlistDTO = wishlistMapper.ToWishlistDTO(wishlist);
+        WishlistResponse wishlistResponse = WishlistResponse.fromEntity(wishlist);
 
         // Assert
-        assertThat(wishlistDTO).isNotNull();
-        assertThat(wishlistDTO.id()).isEqualTo(wishlistId);
-        assertThat(wishlistDTO.customerId()).isEqualTo(customerId);
-        assertThat(wishlistDTO.productIds()).isSameAs(productIds);
+        assertThat(wishlistResponse).isNotNull();
+        assertThat(wishlistResponse.id()).isEqualTo(wishlistId);
+        assertThat(wishlistResponse.customerId()).isEqualTo(customerId);
+        assertThat(wishlistResponse.productIds()).isSameAs(productIds);
     }
 
     @Test
@@ -39,9 +37,9 @@ public class WishlistMapperTest {
         Wishlist wishlist = null;
 
         // Act
-        WishlistDTO wishlistDTO = wishlistMapper.ToWishlistDTO(wishlist);
+        WishlistResponse wishlistResponse = WishlistResponse.fromEntity(wishlist);
 
         // Assert
-        assertThat(wishlistDTO).isNull();
+        assertThat(wishlistResponse).isNull();
     }
 }

@@ -1,7 +1,6 @@
 package com.gabriel.wishlist.Application.Services;
 
 import com.gabriel.wishlist.Application.Interfaces.ExternalServices.IDistributedLock;
-import com.gabriel.wishlist.Application.Interfaces.Mappers.IWishlistMapper;
 import com.gabriel.wishlist.Common.Constants;
 import com.gabriel.wishlist.Common.Exceptions.ResourceConflictException;
 import com.gabriel.wishlist.Common.Exceptions.WishlistFullException;
@@ -27,8 +26,7 @@ public class WishlistServiceTest {
 
     @Mock
     private IWishlistRepository wishlistRepository;
-    @Mock
-    private IWishlistMapper mapper;
+
     @Mock
     private IDistributedLock distributedLock;
 
@@ -39,10 +37,7 @@ public class WishlistServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        when(mapper.ToWishlistDTO(any(Wishlist.class)))
-                .thenAnswer(invocation -> WishlistHelper
-                        .ToDTO(invocation.getArgument(0))
-                );
+
         when(distributedLock.acquireLock(anyString(), anyLong(), anyLong())).thenReturn(true);
     }
 
@@ -56,8 +51,8 @@ public class WishlistServiceTest {
         var wishlist = wishlistService.addProduct(customerId, "product21");
 
         //Assert
-        assertThat(wishlist.productIds().size()).isEqualTo(1);
-        assertThat(wishlist.customerId()).isEqualTo(customerId);
+        assertThat(wishlist.getProductIds().size()).isEqualTo(1);
+        assertThat(wishlist.getCustomerId()).isEqualTo(customerId);
         Mockito.verify(wishlistRepository, times(1)).save(any(Wishlist.class));
     }
 
@@ -99,8 +94,8 @@ public class WishlistServiceTest {
         var response = wishlistService.addProduct(customerId, "product21");
 
         //Assert
-        assertThat(response.productIds().size()).isEqualTo(quantityProducts + 1);
-        assertThat(response.customerId()).isEqualTo(customerId);
+        assertThat(response.getProductIds().size()).isEqualTo(quantityProducts + 1);
+        assertThat(response.getCustomerId()).isEqualTo(customerId);
         Mockito.verify(wishlistRepository, times(1))
                 .save(any(Wishlist.class));
     }
@@ -160,7 +155,7 @@ public class WishlistServiceTest {
         var response = wishlistService.removeProduct(customerId, "product6");
 
         //Assert
-        assertThat(response.productIds().size()).isEqualTo(initialQuantity);
+        assertThat(response.getProductIds().size()).isEqualTo(initialQuantity);
         Mockito.verify(wishlistRepository, times(1)).save(any(Wishlist.class));
     }
 
@@ -180,7 +175,7 @@ public class WishlistServiceTest {
         var response = wishlistService.removeProduct(customerId, "product1");
 
         //Assert
-        assertThat(response.productIds().size()).isEqualTo(initialQuantity - 1);
+        assertThat(response.getProductIds().size()).isEqualTo(initialQuantity - 1);
         Mockito.verify(wishlistRepository, times(1))
                 .save(any(Wishlist.class));
     }

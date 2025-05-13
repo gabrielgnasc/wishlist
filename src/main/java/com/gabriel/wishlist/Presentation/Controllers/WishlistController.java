@@ -1,7 +1,7 @@
 package com.gabriel.wishlist.Presentation.Controllers;
 
 import com.gabriel.wishlist.Application.Interfaces.Services.IWishlistService;
-import com.gabriel.wishlist.Application.Models.WishlistDTO;
+import com.gabriel.wishlist.Presentation.Responses.WishlistResponse;
 import com.gabriel.wishlist.Presentation.Requests.AddProductRequest;
 import com.gabriel.wishlist.Presentation.Responses.ContainsProductResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,25 +30,25 @@ public class WishlistController {
     @ApiResponse(responseCode = "200",description = "retorna Wishlist")
     @ApiResponse(responseCode = "400", description = "A lista de desejos já atingiu seu limite máximo.")
     @PostMapping("/{customerId}/products")
-    public ResponseEntity<WishlistDTO> addProduct(
+    public ResponseEntity<WishlistResponse> addProduct(
             @PathVariable String customerId,
             @RequestBody AddProductRequest request
     ) {
         var response = wishlistService.addProduct(customerId, request.getProductId());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(WishlistResponse.fromEntity(response));
     }
 
     @Operation(summary= "Remover um produto",description= "Remove um produto na lista da Wishlist")
     @ApiResponse(responseCode= "200",description= "retorna Wishlist atualizada")
     @ApiResponse(responseCode= "404", description= "A lista de desejos do cliente solicitado não foi encontrada.")
     @DeleteMapping("/{customerId}/products/{productId}")
-    public ResponseEntity<WishlistDTO> removeProduct(
+    public ResponseEntity<WishlistResponse> removeProduct(
             @PathVariable String customerId,
             @PathVariable String productId
     ) {
 
         var response = wishlistService.removeProduct(customerId, productId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(WishlistResponse.fromEntity(response));
     }
 
     @Operation(summary = "Listar produtos", description= "Lista os produtos da Wishlist")

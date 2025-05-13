@@ -1,9 +1,8 @@
 package com.gabriel.wishlist.Presentation.Controllers;
 
 import com.gabriel.wishlist.Application.Interfaces.Services.IWishlistService;
-import com.gabriel.wishlist.Application.Models.WishlistDTO;
+import com.gabriel.wishlist.Presentation.Responses.WishlistResponse;
 
-import com.gabriel.wishlist.Domain.Entities.Wishlist;
 import com.gabriel.wishlist.Presentation.Requests.AddProductRequest;
 import com.gabriel.wishlist.TestsHelpers.WishlistHelper;
 import org.junit.jupiter.api.Assertions;
@@ -38,7 +37,7 @@ public class WishlistControllerTest {
         // Arrange
         String customerId = "Customer1";
         String productId = "Product1";
-        WishlistDTO wishlist = WishlistHelper.BuildWishlistDTO(customerId, productId);
+        WishlistResponse wishlist = WishlistHelper.BuildWishlistDTO(customerId, productId);
 
         when(wishlistService.addProduct(eq(customerId), eq(productId))).thenReturn(wishlist);
 
@@ -47,7 +46,7 @@ public class WishlistControllerTest {
 
         // Assert
         assertThat(response).isNotNull();
-        assertThat(response.getBody()).isInstanceOf(WishlistDTO.class);
+        assertThat(response.getBody()).isInstanceOf(WishlistResponse.class);
         assertThat(response.getBody().customerId()).isEqualTo(customerId);
         assertThat(response.getBody().productIds()).contains(productId);
 
@@ -59,7 +58,7 @@ public class WishlistControllerTest {
         // Arrange
         String customerId = "Customer1";
         String productId = "Product1";
-        WishlistDTO wishlist = WishlistHelper.BuildWishlistDTO(customerId, productId);
+        WishlistResponse wishlist = WishlistHelper.BuildWishlistDTO(customerId, productId);
 
         when(wishlistService.removeProduct(eq(customerId), eq(productId))).thenReturn(wishlist);
 
@@ -68,7 +67,7 @@ public class WishlistControllerTest {
 
         //Assert
         assertThat(response).isNotNull();
-        assertThat(response.getBody()).isInstanceOf(WishlistDTO.class);
+        assertThat(response.getBody()).isInstanceOf(WishlistResponse.class);
         assertThat(response.getBody().customerId()).isEqualTo(customerId);
         assertThat(response.getBody().productIds()).contains(productId);
 
