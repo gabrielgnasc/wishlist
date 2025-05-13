@@ -1,6 +1,7 @@
 package com.gabriel.wishlist.Presentation.Controllers;
 
 import com.gabriel.wishlist.Application.Interfaces.Services.IWishlistService;
+import com.gabriel.wishlist.Domain.Entities.Wishlist;
 import com.gabriel.wishlist.Presentation.Responses.WishlistResponse;
 
 import com.gabriel.wishlist.Presentation.Requests.AddProductRequest;
@@ -37,7 +38,7 @@ public class WishlistControllerTest {
         // Arrange
         String customerId = "Customer1";
         String productId = "Product1";
-        WishlistResponse wishlist = WishlistHelper.BuildWishlistDTO(customerId, productId);
+        Wishlist wishlist = WishlistHelper.BuildWishlist(customerId);
 
         when(wishlistService.addProduct(eq(customerId), eq(productId))).thenReturn(wishlist);
 
@@ -58,7 +59,7 @@ public class WishlistControllerTest {
         // Arrange
         String customerId = "Customer1";
         String productId = "Product1";
-        WishlistResponse wishlist = WishlistHelper.BuildWishlistDTO(customerId, productId);
+        Wishlist wishlist = WishlistHelper.BuildWishlist(customerId);
 
         when(wishlistService.removeProduct(eq(customerId), eq(productId))).thenReturn(wishlist);
 
